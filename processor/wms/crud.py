@@ -30,8 +30,9 @@ def get_request(doctype, doc_name=None, filters=None, fields=None):
     try:
         response = requests.get(url, headers=headers, params=params)
     except requests.RequestException as e:
-        print("Request failed:", e)
-        return None
+        raise requests.HTTPError(
+            f"Request failed {e}"
+        )
 
     if response.status_code == 200:
         return response.json()
@@ -43,6 +44,7 @@ def get_request(doctype, doc_name=None, filters=None, fields=None):
                 return {}
         except json.JSONDecodeError:
             print("Response is not valid JSON:", response.text)
+            raise
     else:
         try:
             error_data = response.json()
@@ -60,7 +62,7 @@ def post_request(doctype, payload):
         response = requests.post(url, headers=headers, json=payload)
     except requests.RequestException as e:
         print("Request failed:", e)
-        return None
+        raise
 
     if response.status_code == 200:
         return response.json()
