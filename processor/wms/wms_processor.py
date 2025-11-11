@@ -25,3 +25,14 @@ def update_rd_account_master(payload):
         create_rd_account(payload)
     elif rd_account and len(rd_account) > 0:
         update_rd_account(payload)
+
+def update_submitted_schedule(schedule_number, schedule_details):
+    schedule_details['schedule_date'] = datetime.today().isoformat()
+    schedule_details['docstatus'] = 1
+    schedule_details['schedule_number'] = str(schedule_number).strip()
+    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload=schedule_details)
+
+
+
+def get_draft_schedules():
+    return get_request(doctype="WMS RD Schedule", filters=[["docstatus", "=", 0]])['data']

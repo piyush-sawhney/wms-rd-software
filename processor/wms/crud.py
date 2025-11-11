@@ -27,8 +27,11 @@ def get_request(doctype, doc_name=None, filters=None, fields=None):
         params["filters"] = json.dumps(filters)
     if fields:
         params["fields"] = json.dumps(fields)
-
-    response = requests.get(url, headers=headers, params=params)
+    try:
+        response = requests.get(url, headers=headers, params=params)
+    except requests.RequestException as e:
+        print("Request failed:", e)
+        return None
 
     if response.status_code == 200:
         return response.json()
@@ -53,7 +56,7 @@ def get_request(doctype, doc_name=None, filters=None, fields=None):
 def post_request(doctype, payload):
     url = f"{base_url}/api/v2/document/{doctype}"
     try:
-        print(f'Creating record for account number {payload['rd_account_number']} with details {payload}.')
+        print(f'Creating record for {doctype} with details {payload}.')
         response = requests.post(url, headers=headers, json=payload)
     except requests.RequestException as e:
         print("Request failed:", e)
@@ -74,7 +77,7 @@ def post_request(doctype, payload):
 def put_request(doctype, doc_name, payload):
     url = f"{base_url}/api/v2/document/{doctype}/{doc_name}"
     try:
-        print(f'Updating record for account number {doc_name} with details {payload}.')
+        print(f'Updating record for {doctype}: {doc_name} with details {payload}.')
         response = requests.put(url, headers=headers, json=payload)
     except requests.RequestException as e:
         print("Request failed:", e)
