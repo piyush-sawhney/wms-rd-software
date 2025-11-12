@@ -95,8 +95,8 @@ def put_request(doctype, doc_name, payload):
             f"Request failed with status {response.status_code}: {error_data}"
         )
 
-def upload_file_to_doc(file_name, file_path, doctype, doc_name, fieldname, is_private=1):
-    url = f"{base_url}/api/method/upload_file"
+def upload_file_to_doc(file_name, file_path, doctype, doc_name, is_private=1):
+    url = f"{base_url}/api/v2/method/upload_file"
 
     upload_headers = {
         "Authorization": headers["Authorization"],
@@ -109,8 +109,8 @@ def upload_file_to_doc(file_name, file_path, doctype, doc_name, fieldname, is_pr
             data = {
                 "doctype": doctype,
                 "docname": doc_name,
-                "fieldname": fieldname,
                 "is_private": is_private,
+                "folder": "Home/RD Schedules",
             }
             print(f"Uploading file {file_path} to DocType: {doctype} with Doc Name {doc_name}.")
             response = requests.post(

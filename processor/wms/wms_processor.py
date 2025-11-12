@@ -36,5 +36,7 @@ def get_draft_schedules():
     return get_request(doctype="WMS RD Schedule", filters=[["docstatus", "=", 0]])['data']
 
 def upload_schedule(schedule_details, download_path, filename):
-    upload_file_to_doc(doctype="WMS RD Schedule", doc_name=schedule_details['name'],file_path=download_path, file_name=filename,fieldname='schedule_document')
-    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload={"docstatus":1})
+    upload_response = upload_file_to_doc(doctype="WMS RD Schedule", doc_name=schedule_details['name'],file_path=download_path, file_name=filename)
+    file_url = upload_response["data"]["file_url"]
+    put_request(doctype="File", doc_name=upload_response["data"]["name"], payload={"attached_to_field":'schedule_document'})
+    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload={"docstatus":1, 'schedule_document': file_url})
