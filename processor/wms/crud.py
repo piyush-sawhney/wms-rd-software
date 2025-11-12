@@ -83,7 +83,7 @@ def put_request(doctype, doc_name, payload):
         response = requests.put(url, headers=headers, json=payload)
     except requests.RequestException as e:
         print("Request failed:", e)
-        return None
+        raise
     if response.status_code == 200:
         return response.json()
     else:
@@ -94,3 +94,44 @@ def put_request(doctype, doc_name, payload):
         raise requests.HTTPError(
             f"Request failed with status {response.status_code}: {error_data}"
         )
+
+def upload_file_to_doc(file_name, file_path, doctype, doc_name, fieldname, is_private=1):
+    url = f"{base_url}/api/method/upload_file"
+
+    upload_headers = {
+        "Authorization": headers["Authorization"],
+        "Accept": "application/json"
+    }
+
+    try:
+        with open(file_path, "rb") as file:
+            files = {"file": (file_name, file)}
+            data = {
+                "doctype": doctype,
+                "docname": doc_name,
+                "fieldname": fieldname,
+                "is_private": is_private,
+            }
+            print(f"Uploading file {file_path} to DocType: {doctype} with Doc Name {doc_name}.")
+            response = requests.post(
+                url, headers=upload_headers, files=files, data=data
+            )
+
+        # Raise exception for non-200 codes
+        response.raise_for_status()
+        return response.json()
+
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found: {file_path}")
+
+    except requests.HTTPError as e:
+        # Try parse JSON error
+        try:
+            server_error = response.json()
+        except:
+            server_error = response.text
+
+        raise Exception(f"Upload failed ({response.status_code}): {server_error}") from e
+
+    except Exception as e:
+        raise Exception(f"Unexpected error uploading file: {str(e)}")

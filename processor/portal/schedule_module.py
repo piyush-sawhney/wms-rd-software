@@ -4,7 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from config import xpaths, ids
 from config.selenium import driver
-from processor.portal.navigation import navigate_to_page
+from processor.portal.navigation_module import navigate_to_page
 
 
 def fetch_accounts(schedule_details):

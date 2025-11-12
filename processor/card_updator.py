@@ -1,6 +1,6 @@
 from processor.portal.aslass_module import get_non_updated_card_records, update_card_on_portal, \
     update_card_status_to_wms
-from processor.portal.navigation import navigate_to_aslaas
+from processor.portal.navigation_module import navigate_to_aslaas
 
 
 def update_card_flow():

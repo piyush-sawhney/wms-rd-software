@@ -25,7 +25,8 @@ schedule_download = {'download_file': 'GENERATE_REPORT',
                      'date_time': 'HREF_CustomAgentRDAccountFG.LAST_CREATE_DATE_ARRAY',
                      'page_input': 'CustomAgentRDAccountFG.RecurringInstallmentReportScreenListing_REQUESTED_PAGE_NUMBER',
                      'go_to_page': 'Action.RecurringInstallmentReportScreenListing.GOTO_PAGE__',
-                     'go_to_next': 'Action.RecurringInstallmentReportScreenListing.GOTO_NEXT__'}
+                     'go_to_next': 'Action.RecurringInstallmentReportScreenListing.GOTO_NEXT__',
+                     'schedule_number_input':'CustomAgentRDAccountFG.EBANKING_REF_NUMBER'}
 
 schedule_elements = {'search': 'CustomAgentRDAccountFG.ACCOUNT_NUMBER_FOR_SEARCH',
                      'account_no_check_box': 'CustomAgentRDAccountFG.SELECT_INDEX_ARRAY',

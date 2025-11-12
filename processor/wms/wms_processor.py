@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from processor.wms.crud import get_request, post_request, put_request
+from processor.wms.crud import get_request, post_request, put_request, upload_file_to_doc
 
 
 def update_rd_account(payload):
@@ -28,11 +28,13 @@ def update_rd_account_master(payload):
 
 def update_submitted_schedule(schedule_number, schedule_details):
     schedule_details['schedule_date'] = datetime.today().isoformat()
-    schedule_details['docstatus'] = 1
     schedule_details['schedule_number'] = str(schedule_number).strip()
-    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload=schedule_details)
-
+    return put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload=schedule_details)
 
 
 def get_draft_schedules():
     return get_request(doctype="WMS RD Schedule", filters=[["docstatus", "=", 0]])['data']
+
+def upload_schedule(schedule_details, download_path, filename):
+    upload_file_to_doc(doctype="WMS RD Schedule", doc_name=schedule_details['name'],file_path=download_path, file_name=filename,fieldname='schedule_document')
+    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload={"docstatus":1})

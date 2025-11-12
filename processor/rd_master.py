@@ -7,7 +7,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from config import xpaths, ids
 from config.selenium import driver
 from processor.portal.login_logout import login_to_portal
-from processor.portal.navigation import navigate_to_accounts
+from processor.portal.navigation_module import navigate_to_accounts
 from processor.wms.wms_processor import update_rd_account_master
 
 
