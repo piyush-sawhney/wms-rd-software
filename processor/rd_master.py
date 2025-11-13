@@ -15,6 +15,7 @@ def process_accounts():
     long_waits = WebDriverWait(driver, 60, poll_frequency=5)
     start = 0
     counter = 0
+    count = 0
     while True:
         rows = driver.find_elements(By.XPATH, xpaths.account_details['table_rows'])
         for i in range(start, (counter + len(rows) - 3)):
@@ -22,6 +23,7 @@ def process_accounts():
             element = long_waits.until(EC.element_to_be_clickable((By.ID, id_of_account)))
             element.click()
             update_account_to_wms()
+            print(f"Total Accounts updated {count}")
             driver.find_element(By.ID, ids.navigation_elements['back_button']).click()
             start = start + 1
         counter = start
