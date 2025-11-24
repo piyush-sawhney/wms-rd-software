@@ -22,7 +22,3 @@ def login_to_portal():
     driver.find_element(By.ID, ids.login_elements['password']).send_keys(password)
     long_waits = WebDriverWait(driver, 60, poll_frequency=2)
     long_waits.until(EC.element_to_be_clickable((By.ID, ids.navigation_elements['accounts'])))
-
-
-def logout_from_portal():
-    pass

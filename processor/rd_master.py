@@ -24,6 +24,7 @@ def process_accounts():
             element.click()
             update_account_to_wms()
             print(f"Total Accounts updated {count}")
+            count += 1
             driver.find_element(By.ID, ids.navigation_elements['back_button']).click()
             start = start + 1
         counter = start

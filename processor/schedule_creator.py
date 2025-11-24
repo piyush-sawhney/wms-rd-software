@@ -14,7 +14,7 @@ def create_schedules():
     for draft_schedule in draft_schedules:
         schedule_details = get_request(doctype="WMS RD Schedule", doc_name=draft_schedule['name'])['data']
         print(schedule_details)
-        if not schedule_details['schedule_number'] or not schedule_details['schedule_date']:
+        if not schedule_details.get('schedule_number') or not schedule_details.get('schedule_date'):
             navigate_to_accounts()
             fetch_accounts(schedule_details)
             select_accounts(schedule_details)
