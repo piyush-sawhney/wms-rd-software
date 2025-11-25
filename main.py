@@ -1,6 +1,7 @@
-from processor.portal.login_logout import login_to_portal
-from processor.rd_master import rd_master_flow
-from processor.schedule_creator import get_draft_schedules, create_schedules
-
-# rd_master_flow()
-create_schedules()
+from rd_app.rd_master import process_rd_master
+if __name__ == '__main__':
+    option = input("Select an option.\n1. Run Master\n2. Re-Run Master\n3. Create Download and Upload schedules\n")
+    if int(option) == 1:
+        process_rd_master()
+    elif int(option) == 2:
+        process_rd_master(is_rerun=True)
