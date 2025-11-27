@@ -10,8 +10,15 @@ from config.selenium import driver, download_dir
 from selenium.webdriver.support import expected_conditions as EC
 
 
+def parse_date(starting_date):
+    if "T" in starting_date:
+        starting_date = starting_date.split("T")[0]
+
+    return datetime.strptime(starting_date, "%Y-%m-%d").strftime("%d-%b-%Y")
+
+
 def search_schedule(schedule_number, starting_date, ending_date=None):
-    start_date = datetime.strptime(starting_date, "%Y-%m-%d").strftime("%d-%b-%Y")
+    start_date = parse_date(starting_date)
     short_waits = WebDriverWait(driver, 30, poll_frequency=1)
     short_waits.until(
         EC.element_to_be_clickable((By.ID, ids.schedule_download['schedule_number_input']))

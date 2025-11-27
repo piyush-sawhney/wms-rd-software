@@ -7,10 +7,10 @@ from rd_app.portal import GlobalState, driver, long_waits
 
 
 def login_to_portal():
-    with open("config/static_config.json", "r") as file:
+    with open("rd_app/config/static_config.json", "r") as file:
         config = json.load(file)
     url = config['login_url']
-    with open("config/credentials.json", "r") as file:
+    with open("rd_app/config/credentials.json", "r") as file:
         config = json.load(file)
     username = config['username']
     password = config['password']

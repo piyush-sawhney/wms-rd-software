@@ -79,8 +79,9 @@ def update_and_verify_account(schedule_details):
             cheque_acc_no_element = driver.find_element(By.ID, ids.schedule_elements['cheque_acc_no'])
             cheque_acc_no_element.clear()
             cheque_acc_no_element.send_keys(rd_accounts[i]['bank_account_number'])
-
-        driver.find_element(By.ID, ids.schedule_elements['save_modification']).click()
+        save_element = short_waits.until(
+            EC.element_to_be_clickable((By.ID, ids.schedule_elements['save_modification'])))
+        save_element.click()
         verify_account(i, len(schedule_details['rd_accounts']))
     schedule_details['rd_accounts'] = rd_accounts
     return schedule_details

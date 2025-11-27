@@ -31,3 +31,12 @@ def update_account_data(account_data):
     elif rd_account and len(rd_account) > 0:
         update_rd_account(account_data)
 
+def get_draft_schedules():
+    return get_request(doctype="WMS RD Schedule", filters=[["docstatus", "=", 0]])['data']
+
+def get_schedule_details(schedule_name):
+    return get_request(doctype="WMS RD Schedule", doc_name=schedule_name)['data']
+
+def upload_schedule():
+    pass
+

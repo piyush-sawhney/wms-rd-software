@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from rd_app.portal import long_waits, short_waits, driver
+from rd_app.portal.common import navigate_to_page, get_end_row_for_page
 from rd_app.wms.processor import update_account_data, update_last_run_account_to_wms
 
 
@@ -20,12 +21,6 @@ def get_total_accounts_and_page_numbers() -> tuple[int, int]:
     total_accounts = int(re.search(r'of\s+(\d+)', total_account_element.text).group(1))
     total_pages = (total_accounts + 10 - 1) // 10
     return total_accounts, total_pages
-
-
-def navigate_to_page(page_number):
-    page_number_input = short_waits.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input.paginationtxtbx')))
-    page_number_input.send_keys(page_number)
-    driver.find_element(By.CSS_SELECTOR, 'input.formbtn_pagi_go').click()
 
 
 def extract_account_data(account_number) -> dict:
@@ -92,16 +87,6 @@ def process_accounts_on_a_page(start_row, end_row, page_number):
         except Exception as e:
             update_last_run_account_to_wms(i, page_number)
             raise e
-
-
-def get_end_row_for_page(page_number, total_accounts, total_pages):
-    if page_number == total_pages:
-        accounts_on_last_page = total_accounts % 10
-        if accounts_on_last_page == 0:
-            accounts_on_last_page = 10
-        return 3 + accounts_on_last_page - 1
-    else:
-        return 12
 
 
 def process_rd_accounts(row, page_number):
