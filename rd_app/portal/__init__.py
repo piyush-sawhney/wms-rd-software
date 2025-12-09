@@ -46,5 +46,5 @@ chrome_options.add_experimental_option("prefs", {
 driver = webdriver.Chrome(options=chrome_options)
 driver.maximize_window()
 
-long_waits = WebDriverWait(driver, 60)
-short_waits = WebDriverWait(driver, 15)
+long_waits = WebDriverWait(driver, 60, poll_frequency=2)
+short_waits = WebDriverWait(driver, 15, poll_frequency=1)

@@ -1,8 +1,9 @@
 from rd_app.portal import GlobalState
 from rd_app.portal.creator import process_schedule
+from rd_app.portal.downloader import download_schedule
 from rd_app.portal.login import login_to_portal
 from rd_app.portal.navigation import navigate_to_accounts
-from rd_app.wms.processor import get_draft_schedules, get_schedule_details
+from rd_app.wms.processor import get_draft_schedules, get_schedule_details, update_submitted_schedule, upload_schedule
 
 
 def process_schedule_creation():
@@ -15,9 +16,8 @@ def process_schedule_creation():
             print(f"Retrieved Schedule Details {schedule_details}")
             if not schedule_details.get('schedule_number') or not schedule_details.get('schedule_date'):
                 navigate_to_accounts()
-                process_schedule(schedule_details=schedule_details)
-                # fetch_accounts(schedule_details)
-                # select_accounts(schedule_details)
-                # schedule_number, schedule_date = process_schedule(schedule_details)
-                # download_schedule(schedule_number, schedule_date)
-                # upload_schedule()
+                schedule_details = process_schedule(schedule_details=schedule_details)
+                update_submitted_schedule(schedule_details)
+            file_name, file_path = download_schedule(schedule_details)
+            upload_schedule(schedule_details, file_path, file_name)
+
