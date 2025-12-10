@@ -1,3 +1,4 @@
+from dataclasses import fields
 from datetime import datetime
 
 from rd_app.wms.crud import get_request, put_request, post_request, get_request_client, put_request_client, \
@@ -43,8 +44,17 @@ def upload_schedule(schedule_details, download_path, filename):
     upload_response = upload_file_to_doc(doctype="WMS RD Schedule", doc_name=schedule_details['name'],file_path=download_path, file_name=filename)
     file_url = upload_response["data"]["file_url"]
     put_request(doctype="File", doc_name=upload_response["data"]["name"], payload={"attached_to_field":'schedule_document'})
-    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload={"docstatus":1, 'schedule_document': file_url})
+    put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload={
+        "docstatus":1,
+        'schedule_document': file_url
+    })
 
 def update_submitted_schedule(schedule_details):
     schedule_details['schedule_date'] = datetime.today().isoformat()
     return put_request(doctype="WMS RD Schedule", doc_name=schedule_details['name'], payload=schedule_details)
+
+def get_non_updated_card_list():
+    return get_request(doctype="WMS RD Account", filters=[["is_card_updated", "=", 0], ["final_card_number", "!=", ""], ["status", "=", "Active"]], fields=["rd_account_number", "card_number"])['data']
+
+def update_card_on_wms(rd_account_number, card_number):
+    return put_request(doctype="WMS RD Account", doc_name=rd_account_number, payload={"card_number": card_number, "is_card_updated": 1})

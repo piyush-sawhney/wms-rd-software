@@ -39,37 +39,33 @@ def download_schedule_excel():
 
 
 def wait_for_download(timeout=40):
+    before = set(os.listdir(download_dir))
+
     end_time = time.time() + timeout
+    new_file = None
 
     while time.time() < end_time:
-        files = os.listdir(download_dir)
+        after = set(os.listdir(download_dir))
 
-        # Chrome temp files on all platforms
-        temp_patterns = (
-            ".crdownload",  # Windows / normal Chrome
-            ".tmp",  # Sometimes temp extension
-        )
+        # 2. Detect new files
+        diff = after - before
+        if diff:
+            # Only one new file should appear
+            new_file = diff.pop()
 
-        # detect in-progress files
-        temp_files = [
-            f for f in files
-            if f.endswith(temp_patterns) or f.startswith(".com.google.Chrome")
-        ]
+            # 3. Handle temp files (.crdownload)
+            if new_file.endswith(".crdownload"):
+                # Wait for completion
+                time.sleep(0.5)
+                continue
 
-        if temp_files:
-            time.sleep(1)
-            continue
+            # If no .crdownload version remains -> download complete
+            temp_file = new_file + ".crdownload"
+            if temp_file not in after:
+                file_path = os.path.join(download_dir, new_file)
+                return new_file, file_path
 
-        # If no temp files → download completed
-        if files:
-            # Pick the latest created file
-            newest_file = max(
-                [os.path.join(download_dir, f) for f in files],
-                key=os.path.getctime
-            )
-            return os.path.basename(newest_file), newest_file
-
-        time.sleep(1)
+        time.sleep(0.5)
 
     raise TimeoutError("Download did not complete in time.")
 

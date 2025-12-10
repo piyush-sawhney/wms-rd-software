@@ -8,7 +8,8 @@ with open("rd_app/config/static_config.json", "r") as file:
 base_url = config['base_url']
 api_key = os.getenv("API_KEY")
 api_secret = os.getenv("API_SECRET")
-
+ssl = bool(os.getenv("SSL"))
+print(ssl)
 if not api_key or not api_secret:
     raise ValueError("Missing API_KEY or API_SECRET in environment variables")
 headers = {
@@ -26,7 +27,7 @@ def get_request_client(doctype):
         params['doctype'] = doctype
     try:
         print(f'Getting {doctype} through frappe get client.')
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, verify=ssl)
     except requests.RequestException as e:
         raise requests.HTTPError(
             f"Request failed {e}"
@@ -54,7 +55,7 @@ def put_request_client(payload):
     }
     try:
         print(f'Updating {payload} through frappe client.')
-        response = requests.put(url, headers=upload_headers, data=data)
+        response = requests.put(url, headers=upload_headers, data=data, verify=ssl)
     except requests.RequestException as e:
         print("Request failed:", e)
         raise
@@ -82,7 +83,7 @@ def get_request(doctype, doc_name=None, filters=None, fields=None, or_filters=No
     if or_filters:
         params["or_filters"] = json.dumps(or_filters)
     try:
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params, verify=ssl)
     except requests.RequestException as e:
         raise requests.HTTPError(
             f"Request failed {e}"
@@ -112,7 +113,7 @@ def post_request(doctype, payload):
     url = f"{base_url}/api/v2/document/{doctype}"
     try:
         print(f'Creating record for {doctype} with details {payload}.')
-        response = requests.post(url, headers=headers, json=payload)
+        response = requests.post(url, headers=headers, json=payload, verify=ssl)
     except requests.RequestException as e:
         print("Request failed:", e)
         raise
@@ -133,7 +134,7 @@ def put_request(doctype, doc_name, payload):
     url = f"{base_url}/api/v2/document/{doctype}/{doc_name}"
     try:
         print(f'Updating record for {doctype}: {doc_name} with details {payload}.')
-        response = requests.put(url, headers=headers, json=payload)
+        response = requests.put(url, headers=headers, json=payload, verify=ssl)
     except requests.RequestException as e:
         print("Request failed:", e)
         raise
@@ -167,7 +168,7 @@ def upload_file_to_doc(file_name, file_path, doctype, doc_name, is_private=1):
             }
             print(f"Uploading file {file_path} to DocType: {doctype} with Doc Name {doc_name}.")
             response = requests.post(
-                url, headers=upload_headers, files=files, data=data
+                url, headers=upload_headers, files=files, data=data, verify=ssl
             )
 
         # Raise exception for non-200 codes
