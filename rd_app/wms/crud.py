@@ -3,7 +3,7 @@ import os
 
 import requests
 
-with open("rd_app/config/static_config.json", "r") as file:
+with open("config/static_config.json", "r") as file:
     config = json.load(file)
 base_url = config['base_url']
 api_key = os.getenv("API_KEY")

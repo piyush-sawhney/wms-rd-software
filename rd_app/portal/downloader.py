@@ -38,7 +38,7 @@ def download_schedule_excel():
     driver.find_element(By.CSS_SELECTOR, 'input.formbtn_drpdwn').click()
 
 
-def wait_for_download(timeout=40):
+def wait_for_download(schedule_number, schedule_date, timeout=40):
     before = set(os.listdir(download_dir))
 
     end_time = time.time() + timeout
@@ -62,8 +62,12 @@ def wait_for_download(timeout=40):
             # If no .crdownload version remains -> download complete
             temp_file = new_file + ".crdownload"
             if temp_file not in after:
-                file_path = os.path.join(download_dir, new_file)
-                return new_file, file_path
+                old_path = os.path.join(download_dir, new_file)
+                base, ext = os.path.splitext(new_file)
+                new_name = f"{schedule_number}-{schedule_date}{ext}"
+                new_path = os.path.join(download_dir, new_name)
+                os.rename(old_path, new_path)
+                return new_name, new_path
 
         time.sleep(0.5)
 
@@ -75,4 +79,4 @@ def download_schedule(schedule_details):
     search_schedule(schedule_number=schedule_details.get('schedule_number'),
                     starting_date=schedule_details.get('schedule_date'))
     download_schedule_excel()
-    return wait_for_download()
+    return wait_for_download(schedule_number=schedule_details.get('schedule_number'), schedule_date=schedule_details.get('schedule_date'))
