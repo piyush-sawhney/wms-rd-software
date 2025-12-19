@@ -99,3 +99,4 @@ def process_rd_accounts(row, page_number):
         process_accounts_on_a_page(start_row, end_row, page_number)
         print(f"Page Number {page_number}")
         navigate_to_page(page_number + 1)
+        row = 0 #For Rerun case
