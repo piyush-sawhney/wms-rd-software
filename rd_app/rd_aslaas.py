@@ -13,5 +13,5 @@ def process_aslaas_update():
             login_to_portal()
         navigate_to_aslaas()
         for item in non_updated_card_list_dict:
-            if update_card_on_portal(rd_account_number=item['rd_account_number'], card_number=item['card_number']):
-                update_card_on_wms(rd_account_number=item['rd_account_number'], card_number=item['card_number'])
+            if update_card_on_portal(rd_account_number=item['rd_account_number'], card_number=item['final_card_number']):
+                update_card_on_wms(rd_account_number=item['rd_account_number'], card_number=item['final_card_number'])
