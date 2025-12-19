@@ -7,7 +7,7 @@ from rd_app.wms.processor import get_non_updated_card_list, update_card_on_wms
 
 def process_aslaas_update():
     non_updated_card_list_dict = get_non_updated_card_list()
-    print(f"Total Records fetched for non updated cards{len(non_updated_card_list_dict)}")
+    print(f"Total Records fetched for non updated cards: {len(non_updated_card_list_dict)}")
     if non_updated_card_list_dict:
         if not GlobalState.is_logged_in:
             login_to_portal()
