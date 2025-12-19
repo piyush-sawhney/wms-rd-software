@@ -2,6 +2,8 @@ import json
 import os
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
 with open("config/static_config.json", "r") as file:
     config = json.load(file)
@@ -15,8 +17,19 @@ if not api_key or not api_secret:
 headers = {
     "Authorization": f"token {api_key}:{api_secret}",
     'Accept': 'application/json',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    "User-Agent": "WMS-RD-Client/1.0"
 }
+session = requests.Session()
+retry_strategy = Retry(
+    total=3,
+    backoff_factor=1,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["GET", "POST", "PUT"]
+)
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session.mount("http://", adapter)
+session.mount("https://", adapter)
 
 
 def get_request_client(doctype):
@@ -27,7 +40,7 @@ def get_request_client(doctype):
         params['doctype'] = doctype
     try:
         print(f'Getting {doctype} through frappe get client.')
-        response = requests.get(url, headers=headers, params=params, verify=ssl)
+        response = session.get(url, headers=headers, params=params, verify=ssl)
     except requests.RequestException as e:
         raise requests.HTTPError(
             f"Request failed {e}"
@@ -55,7 +68,7 @@ def put_request_client(payload):
     }
     try:
         print(f'Updating {payload} through frappe client.')
-        response = requests.put(url, headers=upload_headers, data=data, verify=ssl)
+        response = session.put(url, headers=upload_headers, data=data, verify=ssl)
     except requests.RequestException as e:
         print("Request failed:", e)
         raise
@@ -83,7 +96,7 @@ def get_request(doctype, doc_name=None, filters=None, fields=None, or_filters=No
     if or_filters:
         params["or_filters"] = json.dumps(or_filters)
     try:
-        response = requests.get(url, headers=headers, params=params, verify=ssl)
+        response = session.get(url, headers=headers, params=params, verify=ssl)
     except requests.RequestException as e:
         raise requests.HTTPError(
             f"Request failed {e}"
@@ -113,7 +126,7 @@ def post_request(doctype, payload):
     url = f"{base_url}/api/v2/document/{doctype}"
     try:
         print(f'Creating record for {doctype} with details {payload}.')
-        response = requests.post(url, headers=headers, json=payload, verify=ssl)
+        response = session.post(url, headers=headers, json=payload, verify=ssl)
     except requests.RequestException as e:
         print("Request failed:", e)
         raise
@@ -134,7 +147,7 @@ def put_request(doctype, doc_name, payload):
     url = f"{base_url}/api/v2/document/{doctype}/{doc_name}"
     try:
         print(f'Updating record for {doctype}: {doc_name} with details {payload}.')
-        response = requests.put(url, headers=headers, json=payload, verify=ssl)
+        response = session.put(url, headers=headers, json=payload, verify=ssl)
     except requests.RequestException as e:
         print("Request failed:", e)
         raise
@@ -148,6 +161,7 @@ def put_request(doctype, doc_name, payload):
         raise requests.HTTPError(
             f"Request failed with status {response.status_code}: {error_data}"
         )
+
 
 def upload_file_to_doc(file_name, file_path, doctype, doc_name, is_private=1):
     url = f"{base_url}/api/v2/method/upload_file"
@@ -167,7 +181,7 @@ def upload_file_to_doc(file_name, file_path, doctype, doc_name, is_private=1):
                 "folder": "Home/RD Schedules",
             }
             print(f"Uploading file {file_path} to DocType: {doctype} with Doc Name {doc_name}.")
-            response = requests.post(
+            response = session.post(
                 url, headers=upload_headers, files=files, data=data, verify=ssl
             )
 

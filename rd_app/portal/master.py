@@ -1,4 +1,5 @@
 import re
+import time
 from datetime import datetime
 
 from selenium.webdriver.common.by import By
@@ -72,6 +73,7 @@ def extract_account_data(account_number) -> dict:
 
 def process_account(i):
     dynamic_selector = f'tr:nth-of-type({i}) a'
+    time.sleep(1)
     account_element = long_waits.until(EC.element_to_be_clickable((By.CSS_SELECTOR, dynamic_selector)))
     account_number = account_element.text
     account_element.click()
@@ -95,4 +97,5 @@ def process_rd_accounts(row, page_number):
         start_row = 3 + (row % 10)
         end_row = get_end_row_for_page(page_number, total_account_count, page_number_count)
         process_accounts_on_a_page(start_row, end_row, page_number)
+        print(f"Page Number {page_number}")
         navigate_to_page(page_number + 1)
