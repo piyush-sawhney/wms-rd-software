@@ -67,7 +67,7 @@ def save_account(i, row, account_number, number_of_installments, schedule_type=N
 def verify_account(i, row, account_number, schedule_type):
     modified_row_number = 10 if schedule_type.lower() == "cash" else 12
     short_waits.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, f"input.absmiddle[value='{i}']")))
+        EC.visibility_of_element_located((By.CSS_SELECTOR, f"input.absmiddle[value='{i}']")))
     account_no_element = driver.find_element(By.CSS_SELECTOR, f'tr:nth-of-type({row + 2}) td:nth-of-type(2) span')
     assert account_number == account_no_element.text.strip()
     modified_element = driver.find_element(By.CSS_SELECTOR, f'tr:nth-of-type({row + 2}) td:nth-of-type({modified_row_number}) span')

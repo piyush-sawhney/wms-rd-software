@@ -5,7 +5,7 @@ from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
-from rd_app.portal import short_waits, download_dir, driver
+from rd_app.portal import short_waits, download_dir, driver, long_waits
 from rd_app.portal.navigation import navigate_to_reports
 
 
@@ -64,15 +64,24 @@ def wait_for_download(schedule_number, schedule_date, timeout=40):
             if temp_file not in after:
                 old_path = os.path.join(download_dir, new_file)
                 base, ext = os.path.splitext(new_file)
-                new_name = f"{schedule_number}-{schedule_date}{ext}"
+                date_only = extract_date_only(schedule_date)
+                new_name = f"{schedule_number}-{date_only}{ext}"
                 new_path = os.path.join(download_dir, new_name)
                 os.rename(old_path, new_path)
+                long_waits.until_not(EC.presence_of_element_located((By.CSS_SELECTOR, "div.blockUI.blockOverlay")))
                 return new_name, new_path
 
         time.sleep(0.5)
 
     raise TimeoutError("Download did not complete in time.")
 
+def extract_date_only(schedule_date: str) -> str:
+    # Case 1: full ISO datetime -> split at 'T'
+    if "T" in schedule_date:
+        return schedule_date.split("T")[0]
+
+    # Case 2: already only the date
+    return schedule_date
 
 def download_schedule(schedule_details):
     navigate_to_reports()
